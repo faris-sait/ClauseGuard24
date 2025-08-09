@@ -335,7 +335,7 @@ async def analyze_terms(request: AnalyzeRequest):
         )
         
         # Save to database if available
-        if analyses_collection:
+        if analyses_collection is not None:
             try:
                 analyses_collection.insert_one({
                     "url": str(request.url),
