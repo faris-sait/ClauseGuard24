@@ -35,8 +35,9 @@ else:
     db = None
     analyses_collection = None
 
-# OpenAI setup
-openai.api_key = os.environ.get('OPENAI_API_KEY')
+# OpenAI setup  
+from openai import OpenAI
+openai_client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
 # Request models
 class AnalyzeRequest(BaseModel):
