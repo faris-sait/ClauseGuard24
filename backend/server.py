@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 import os
+from dotenv import load_dotenv
 from typing import List, Dict, Any, Optional
 import requests
 from bs4 import BeautifulSoup
@@ -11,6 +12,9 @@ import re
 from urllib.parse import urljoin, urlparse
 import time
 from pymongo import MongoClient
+
+# Load environment variables
+load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
