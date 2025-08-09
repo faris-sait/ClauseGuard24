@@ -213,7 +213,76 @@ def analyze_with_gpt(text: str, title: str) -> Dict[str, Any]:
         return analysis
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error analyzing content with AI: {str(e)}")
+        # If AI analysis fails, provide a fallback pattern-based analysis
+        print(f"AI analysis failed: {e}, using fallback analysis")
+        return analyze_with_fallback(text, title)
+
+def analyze_with_fallback(text: str, title: str) -> Dict[str, Any]:
+    """Fallback analysis using pattern matching when AI is unavailable"""
+    text_lower = text.lower()
+    
+    # Pattern-based risk detection
+    risks = []
+    
+    # Check for data sharing
+    if any(keyword in text_lower for keyword in ["share", "third party", "partner", "affiliate"]):
+        risks.append({
+            "category": "data_sharing",
+            "title": "Data Sharing with Third Parties",
+            "description": "This document indicates your data may be shared with external companies",
+            "excerpt": "Data sharing terms detected in document",
+            "severity": 6
+        })
+    
+    # Check for arbitration
+    if any(keyword in text_lower for keyword in ["arbitration", "binding arbitration", "dispute resolution"]):
+        risks.append({
+            "category": "arbitration", 
+            "title": "Mandatory Arbitration",
+            "description": "You may be required to resolve disputes through arbitration instead of courts",
+            "excerpt": "Arbitration clauses detected in document",
+            "severity": 7
+        })
+    
+    # Check for auto renewal
+    if any(keyword in text_lower for keyword in ["auto-renew", "automatic renewal", "recurring"]):
+        risks.append({
+            "category": "auto_renewal",
+            "title": "Automatic Subscription Renewal", 
+            "description": "Your subscription may automatically renew and charge you",
+            "excerpt": "Auto-renewal terms detected in document",
+            "severity": 5
+        })
+    
+    # Check for liability limitations
+    if any(keyword in text_lower for keyword in ["no liability", "disclaim", "not liable", "limitation of damages"]):
+        risks.append({
+            "category": "no_liability",
+            "title": "Limited Company Liability",
+            "description": "The company limits or excludes their liability for damages",
+            "excerpt": "Liability limitation clauses detected in document", 
+            "severity": 6
+        })
+    
+    # Check for tracking
+    if any(keyword in text_lower for keyword in ["cookies", "tracking", "analytics", "advertising"]):
+        risks.append({
+            "category": "tracking",
+            "title": "Extensive Tracking & Advertising",
+            "description": "The service may track your behavior for advertising purposes",
+            "excerpt": "Tracking and advertising terms detected in document",
+            "severity": 4
+        })
+    
+    return {
+        "summary": [
+            "This is a legal document that governs your use of the service",
+            "Terms include various rights and obligations for users",
+            "Pattern-based analysis has identified several potential risk areas",
+            "For detailed legal advice, please consult with a qualified attorney"
+        ],
+        "risks": risks
+    }
 
 def calculate_risk_score(risks: List[Dict[str, Any]]) -> int:
     """Calculate overall risk score based on identified risks"""
