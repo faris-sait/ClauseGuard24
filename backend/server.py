@@ -187,7 +187,7 @@ def analyze_with_gpt(text: str, title: str) -> Dict[str, Any]:
         }}
         """
 
-        response = openai.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a legal expert specialized in analyzing Terms of Service, Privacy Policies, and EULAs. Provide clear, accurate analysis in the requested JSON format."},
