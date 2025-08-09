@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from typing import List, Dict, Any, Optional
 import requests
 from bs4 import BeautifulSoup
-import openai
 import json
 import re
 from urllib.parse import urljoin, urlparse
@@ -32,7 +31,7 @@ app.add_middleware(
 mongo_url = os.environ.get('MONGO_URL')
 if mongo_url:
     client = MongoClient(mongo_url)
-    db = client.risk_analyzer
+    db = client.clauseguard
     analyses_collection = db.analyses
 else:
     client = None
@@ -304,7 +303,7 @@ def calculate_risk_score(risks: List[Dict[str, Any]]) -> int:
 
 @app.get("/api/")
 async def root():
-    return {"message": "Terms & Conditions Risk Analyzer API"}
+    return {"message": "ClauseGuard API - Protecting you from hidden risks"}
 
 @app.post("/api/analyze", response_model=AnalysisResponse)
 async def analyze_terms(request: AnalyzeRequest):
