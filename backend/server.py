@@ -16,7 +16,11 @@ from pymongo import MongoClient
 load_dotenv()
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(
+    title="ClauseGuard API",
+    description="API for analyzing Terms of Service and Privacy Policies",
+    version="1.0.0"
+)
 
 # CORS middleware
 app.add_middleware(
@@ -301,9 +305,41 @@ def calculate_risk_score(risks: List[Dict[str, Any]]) -> int:
     risk_score = min(int(total_score), 100)
     return risk_score
 
-@app.get("/api/")
+# Add root endpoint for health check
+@app.get("/")
 async def root():
-    return {"message": "ClauseGuard API - Protecting you from hidden risks"}
+    """Root endpoint - API health check"""
+    return {
+        "message": "ClauseGuard API is running",
+        "status": "healthy",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/",
+            "api_info": "/api/",
+            "analyze": "/api/analyze",
+            "docs": "/docs"
+        }
+    }
+
+@app.get("/api/")
+async def api_info():
+    """API information endpoint"""
+    return {
+        "message": "ClauseGuard API - Protecting you from hidden risks",
+        "description": "API for analyzing Terms of Service and Privacy Policies",
+        "version": "1.0.0"
+    }
+
+# Add health check endpoint
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": time.time(),
+        "database": "connected" if analyses_collection is not None else "not configured",
+        "openai": "configured" if os.environ.get('OPENAI_API_KEY') else "not configured"
+    }
 
 @app.post("/api/analyze", response_model=AnalysisResponse)
 async def analyze_terms(request: AnalyzeRequest):
@@ -357,4 +393,4 @@ async def analyze_terms(request: AnalyzeRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
