@@ -12,10 +12,7 @@
       "src": "/(.*)",
       "dest": "server.py"
     }
-  ],
-  "env": {
-    "PYTHONPATH": "."
-  }
+  ]
 }
 
 # requirements.txt - Make sure you have this file with all dependencies
@@ -51,8 +48,3 @@ httpx>=0.25.0
 distro>=1.8.0
 jiter>=0.5.0
 soupsieve>=2.5.0
-
-# api/index.py - Create this file in an 'api' folder
-from server import app
-
-# This is required for Vercel to work with FastAPI
